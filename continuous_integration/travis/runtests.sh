@@ -26,8 +26,14 @@ if [ "$JOBLIB_TESTS" = "true" ]; then
     (cd $JOBLIB/externals && bash copy_loky.sh $TRAVIS_BUILD_DIR)
     pytest -vl --ignore $JOBLIB/externals --pyargs joblib
 else
+
+    export PYTEST_ARGS="-vl --timeout=30 --maxfail=5"
+    if [ "$LOKY_TEST_FORCE_OPENBLAS" = "true" ]; then
+        # Fail if Blas is not found. This should be used when numpy is
+        # installed via pip.
+        export PYTEST_ARGS="$PYTEST_ARGS --force-blas"
+    fi
     # Run the tests and collect trace coverage data both in the subprocesses
     # and its subprocesses.
-    COVERAGE_PROCESS_START="$TRAVIS_BUILD_DIR/.coveragerc" tox -- -vl \
-            --timeout=30 --maxfail=5
+    COVERAGE_PROCESS_START="$TRAVIS_BUILD_DIR/.coveragerc" tox -- $PYTEST_ARGS
 fi
