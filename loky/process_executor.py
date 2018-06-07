@@ -77,6 +77,7 @@ from .backend.compat import wait
 from .backend.context import cpu_count
 from .backend.queues import Queue, SimpleQueue, Full
 from .backend.utils import recursive_terminate
+from .backend.utils import limit_threads_clib
 
 try:
     from concurrent.futures.process import BrokenProcessPool as _BPPException
