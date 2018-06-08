@@ -12,12 +12,8 @@ from tempfile import mkstemp
 from loky.backend import get_context
 from loky.backend.compat import wait
 from loky.backend.utils import recursive_terminate
-from .utils import TimingWrapper, check_subprocess_call
 
-try:
-    from ._openmp.parallel_sum import parallel_sum
-except ImportError:
-    parallel_sum = None
+from .utils import TimingWrapper, check_subprocess_call, with_parallel_sum
 
 if sys.version_info < (3, 3):
     FileNotFoundError = NameError
@@ -573,9 +569,9 @@ class TestLokyBackend:
         from ._openmp.parallel_sum import parallel_sum
         return parallel_sum(x)
 
-    @pytest.mark.skipif(parallel_sum is None,
-                        reason="cython is not installed on this system.")
+    @with_parallel_sum
     def test_compatibility_openmp(self):
+        from ._openmp.parallel_sum import parallel_sum
         # Use openMP before launching subprocesses. With fork backend, some fds
         # are nto correctly clean up, causing a freeze. No freeze should be
         # detected with loky.
