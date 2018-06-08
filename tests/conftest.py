@@ -8,7 +8,7 @@ from multiprocessing.util import log_to_stderr
 def pytest_addoption(parser):
     parser.addoption("--loky-verbosity", type=int, default=logging.DEBUG,
                      help="log-level: integer, SUBDEBUG(5) - INFO(20)")
-    parser.addoption("--force-blas", action='store_true',
+    parser.addoption("--openblas-test-noskip", action='store_true',
                      help="Fail test_limit_openBLAS_threads if BLAS is not "
                      "found")
 
@@ -19,9 +19,9 @@ def log_lvl(request):
 
 
 @pytest.fixture
-def force_blas(request):
-    """Choose logging level for multiprocessing"""
-    return request.config.getoption("--force-blas")
+def openblas_test_noskip(request):
+    """Fail the test is openBLAS is not found"""
+    return request.config.getoption("--openblas-test-noskip")
 
 
 def pytest_configure(config):
