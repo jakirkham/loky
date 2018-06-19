@@ -5,7 +5,7 @@
 
 $VERSION=(36, 34, 27)
 
-function TestPythonVersions () {
+function RunTestsWithTox () {
     Write-Host $PYTHON
     ForEach($ver in $VERSION){
         $env:TOXPYTHON = "C:\Python$ver$env:PYTHON_ARCH_SUFFIX\python.exe"
@@ -22,4 +22,29 @@ function TestPythonVersions () {
     Exit 0
 }
 
-TestPythonVersions
+function RunTestsWithConda () {
+
+    conda install -y numpy psutil pytest cython
+    pip install pytest-timeout
+    pip install .
+
+    bash ./continuous_integration/build_test_ext.sh
+
+    pytest -vlx --timeout=50 --mkl-win32-test-noskip
+    If( $LASTEXITCODE -ne 0){
+            Exit 1
+    }
+    Exit 0
+
+}
+
+function main () {
+    If( $env:TEST_CONDA -eq "true" ){
+        RunTestsWithConda
+    }
+    Else{
+        RunTestsWithTox
+    }
+}
+
+main

@@ -11,6 +11,9 @@ def pytest_addoption(parser):
     parser.addoption("--openblas-test-noskip", action='store_true',
                      help="Fail test_limit_openblas_threads if BLAS is not "
                      "found")
+    parser.addoption("--mkl-win32-test-noskip", action='store_true',
+                     help="Fail test_limit_mkl_threads if MKL is not "
+                     "found")
 
 
 def log_lvl(request):
@@ -22,6 +25,12 @@ def log_lvl(request):
 def openblas_test_noskip(request):
     """Fail the test is OpenBLAS is not found"""
     return request.config.getoption("--openblas-test-noskip")
+
+
+@pytest.fixture
+def mkl_win32_test_noskip(request):
+    """Fail the test is OpenBLAS is not found"""
+    return request.config.getoption("--mkl-win32-test-noskip")
 
 
 def pytest_configure(config):
